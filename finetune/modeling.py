@@ -15,7 +15,7 @@ from transformers import AutoModel, AutoConfig
         
 #     def forward(self, x):
 #         bert_output = self.bert_encoder(**x)
-#         cls_vectors = bert_output.last_hidden.state[:, 0, :]
+#         cls_vectors = bert_output.last_hidden_state[:, 0, :]
 #         cls_vectors = self.dropout(cls_vectors)
 #         logits = self.classifier(cls_vectors)
 #         return logits
@@ -30,7 +30,7 @@ class BertForPairwiseCLS(BertPreTrainedModel):
         
     def forward(self, x):
         bert_output = self.bert(**x)
-        cls_vectors = bert_output.last_hidden.state[:, 0, :]
+        cls_vectors = bert_output.last_hidden_state[:, 0, :]
         cls_vectors = self.dropout(cls_vectors)
         logits = self.classifier(cls_vectors)
         return logits

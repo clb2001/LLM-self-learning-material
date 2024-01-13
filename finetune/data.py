@@ -34,6 +34,7 @@ class IterableAFQMC(IterableDataset):
             for line in f:
                 yield json.loads(line.strip())
 
+
 def collote_fn(batch_samples): # 这里应该有且只有一个参数
     batch_sentence_1, batch_sentence_2 = [], []
     batch_label = []
