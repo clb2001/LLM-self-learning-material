@@ -103,6 +103,7 @@ def train_loop(data_loader, model, loss_fn, optimizer, lr_scheduler, epoch, tota
         total_loss += loss.item()
         progress_bar.set_description(f'loss: {total_loss / (finish_step_num + step):>7f}')
         progress_bar.update(1) # 更新进度条，表示完成了一步训练。
+    return total_loss
         
 def test_loop(dataloader, model, mode='test'):
     assert mode in ['Test', 'Valid']
@@ -124,15 +125,15 @@ if __name__=='__main__':
     valid_data = AFQMC('../data/afqmc_public/dev.json')
     checkpoint = "bert-base-chinese"
     tokenizer = AutoTokenizer.from_pretrained(checkpoint)
-    train_dataloader = DataLoader(train_data, batch_size=4, shuffle=True, collate_fn=collote_fn)
-    valid_dataloader = DataLoader(valid_data, batch_size=4, shuffle=True, collate_fn=collote_fn)
+    train_dataloader = DataLoader(train_data, batch_size=6, shuffle=True, collate_fn=collote_fn)
+    valid_dataloader = DataLoader(valid_data, batch_size=6, shuffle=True, collate_fn=collote_fn)
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     print(f'Using {device} device')
     checkpoint = "bert-base-chinese"
     config = AutoConfig.from_pretrained(checkpoint)
     model = BertForPairwiseCLS.from_pretrained(checkpoint, config=config).to(device)
     learning_rate = 1e-5
-    epoch_num = 3
+    epoch_num = 2
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     optimizer = AdamW(model.parameters(), lr=learning_rate)
     loss_fn = nn.CrossEntropyLoss()
@@ -151,7 +152,7 @@ if __name__=='__main__':
         if valid_acc > best_acc:
             best_acc = valid_acc
             print('saving new weights...\n')
-            torch.save(model.state_dict(), f'epoch_{i + 1}_valid_acc_{(100 * valid_acc):0.1f}_model_weights.bin')
+            torch.save(model.state_dict(), f'model/finetune/epoch_{i + 1}_model_weights.bin')
     print("Done!")
-    model.load_state_dict(torch.load('epoch_3_valid_acc_74.1_model_weights.bin'))
+    model.load_state_dict(torch.load('model/finetune/epoch_2_model_weights.bin'))
     test_loop(valid_dataloader, model, mode='Test')
