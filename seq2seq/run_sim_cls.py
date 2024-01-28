@@ -15,7 +15,7 @@ def train_loop(dataloader, model, optimizer, lr_scheduler, epoch, total_loss):
     model.train()
     for batch, batch_data in enumerate(dataloader, start=1):
         batch_data = batch_data.to(device)
-        outputs = model(**batch_data)
+        outputs = model(batch_data)
         loss = outputs.loss
         # 实际上的计算方法
         # loss_fct = CrossEntropyLoss()
